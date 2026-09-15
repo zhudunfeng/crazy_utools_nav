@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f6f7fb">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2718%27 fill=%27%236259e8%27/%3E%3Cpath d=%27M32 13v38M13 32h38M19 19l26 26M45 19 19 45%27 stroke=%27white%27 stroke-width=%276%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
+  <title>Crazy UTools · 工具导航</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --surface: rgba(255, 255, 255, 0.82);
+      --surface-solid: #ffffff;
+      --text: #182230;
+      --muted: #758094;
+      --line: #e8ebf1;
+      --primary: #6259e8;
+      --primary-dark: #4a42c4;
+      --shadow: 0 16px 50px rgba(49, 57, 88, 0.09);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 8% 0%, rgba(113, 99, 247, .11), transparent 30rem),
+        radial-gradient(circle at 92% 12%, rgba(52, 211, 153, .08), transparent 27rem),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+
+    .container { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(232, 235, 241, .75);
+      background: rgba(246, 247, 251, .8);
+      backdrop-filter: blur(18px);
+    }
+    .topbar-inner { height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; font-weight: 800; letter-spacing: -.04em; font-size: 19px; }
+    .brand-mark {
+      display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px;
+      color: white; background: linear-gradient(135deg, #7168f6, #4c43c7); box-shadow: 0 8px 18px rgba(98, 89, 232, .25);
+    }
+    .brand-mark svg { width: 21px; height: 21px; }
+    .top-actions { display: flex; align-items: center; gap: 9px; }
+    .icon-btn, .outline-btn {
+      height: 40px; border: 1px solid var(--line); border-radius: 12px; color: var(--muted); background: rgba(255,255,255,.7);
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: .2s ease;
+    }
+    .icon-btn { width: 40px; }
+    .outline-btn { padding: 0 14px; font-size: 13px; font-weight: 700; }
+    .icon-btn:hover, .outline-btn:hover { color: var(--primary); border-color: #cbc9f8; background: white; transform: translateY(-1px); }
+    .icon-btn svg, .outline-btn svg { width: 17px; height: 17px; }
+
+    .hero { padding: 67px 0 42px; text-align: center; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--primary); background: #eeedff; border-radius: 99px; padding: 7px 12px; font-size: 12px; font-weight: 800; }
+    .eyebrow i { width: 7px; height: 7px; background: #45cf9a; border-radius: 50%; box-shadow: 0 0 0 4px rgba(69,207,154,.14); }
+    h1 { margin: 19px 0 13px; font-size: clamp(35px, 5vw, 55px); line-height: 1.08; letter-spacing: -.065em; }
+    .hero p { margin: 0 auto 28px; max-width: 580px; color: var(--muted); line-height: 1.8; font-size: 15px; }
+    .search-box { position: relative; width: min(620px, 100%); margin: 0 auto; }
+    .search-box svg { position: absolute; left: 19px; top: 50%; width: 20px; height: 20px; color: #9aa3b4; transform: translateY(-50%); pointer-events: none; }
+    .search-box input { width: 100%; height: 58px; padding: 0 108px 0 52px; border: 1px solid #e0e3eb; border-radius: 17px; color: var(--text); background: rgba(255,255,255,.92); outline: none; box-shadow: 0 8px 30px rgba(60,67,105,.07); transition: .2s; }
+    .search-box input:focus { border-color: #b5b0ff; box-shadow: 0 0 0 4px rgba(98,89,232,.1), 0 8px 30px rgba(60,67,105,.07); }
+    .shortcut { position: absolute; right: 14px; top: 50%; padding: 4px 8px; border: 1px solid #e4e7ef; border-radius: 7px; color: #9aa3b4; font-size: 11px; transform: translateY(-50%); }
+
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+    .categories { display: flex; gap: 8px; flex-wrap: wrap; }
+    .category-btn { padding: 9px 14px; border: 0; border-radius: 10px; color: var(--muted); background: transparent; font-size: 13px; font-weight: 700; transition: .2s; }
+    .category-btn:hover { color: var(--primary); background: #eeedff; }
+    .category-btn.active { color: white; background: var(--primary); box-shadow: 0 6px 14px rgba(98,89,232,.2); }
+    .result-count { flex: none; color: var(--muted); font-size: 13px; }
+
+    .tool-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 17px; padding-bottom: 70px; }
+    .tool-card { position: relative; min-height: 185px; padding: 21px; border: 1px solid rgba(232,235,241,.9); border-radius: var(--radius-md); background: var(--surface); box-shadow: 0 4px 20px rgba(55,64,99,.025); transition: .25s ease; overflow: hidden; }
+    .tool-card::after { content: ""; position: absolute; width: 130px; height: 130px; right: -74px; bottom: -75px; border-radius: 50%; background: var(--accent-soft, #eeedff); opacity: .62; pointer-events: none; }
+    .tool-card:hover { border-color: #d9d7ff; background: var(--surface-solid); box-shadow: var(--shadow); transform: translateY(-5px); }
+    .card-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+    .tool-icon { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 14px; color: var(--accent, var(--primary)); background: var(--accent-soft, #eeedff); font-size: 23px; }
+    .tool-icon img { width: 27px; height: 27px; object-fit: contain; border-radius: 7px; }
+    .open-indicator { display: grid; place-items: center; width: 29px; height: 29px; color: #a3abba; border-radius: 9px; transition: .2s; }
+    .tool-card:hover .open-indicator { color: var(--primary); background: #f0efff; }
+    .open-indicator svg { width: 16px; height: 16px; }
+    .tool-card h2 { margin: 17px 0 7px; font-size: 16px; letter-spacing: -.02em; }
+    .tool-card p { min-height: 42px; margin: 0; color: var(--muted); font-size: 12.5px; line-height: 1.7; }
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 13px; }
+    .tag { padding: 4px 7px; border-radius: 6px; color: #8a94a7; background: #f2f4f8; font-size: 10px; }
+    .empty-state { grid-column: 1 / -1; padding: 66px 20px; border: 1px dashed #d9dce6; border-radius: 20px; color: var(--muted); text-align: center; background: rgba(255,255,255,.45); }
+    .empty-state strong { display: block; margin-bottom: 7px; color: var(--text); }
+
+    footer { padding: 23px 0 31px; border-top: 1px solid var(--line); color: #98a1b1; font-size: 12px; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+    .footer-inner span:last-child { display: inline-flex; align-items: center; gap: 6px; }
+    .footer-inner svg { width: 14px; height: 14px; color: #ef7187; fill: #ef7187; }
+
+    .modal-backdrop { position: fixed; inset: 0; z-index: 40; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(25,29,48,.42); backdrop-filter: blur(4px); }
+    .modal-backdrop.show { display: flex; }
+    .modal { width: min(700px, 100%); max-height: min(790px, calc(100vh - 40px)); display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,.5); border-radius: 21px; background: white; box-shadow: 0 25px 80px rgba(30,35,65,.2); overflow: hidden; animation: rise .2s ease-out; }
+    @keyframes rise { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+    .modal-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px; border-bottom: 1px solid var(--line); }
+    .modal-head h3 { margin: 0; font-size: 17px; }
+    .modal-head p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+    .modal-body { padding: 20px 22px; overflow: auto; }
+    .config-editor { width: 100%; min-height: 370px; resize: vertical; padding: 15px; border: 1px solid #dfe3ed; border-radius: 13px; outline: none; color: #3c4660; background: #fafbfe; font: 12px/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .config-editor:focus { border-color: #aaa5f3; box-shadow: 0 0 0 3px rgba(98,89,232,.1); }
+    .schema-hint { margin: 12px 0 0; color: var(--muted); font-size: 11px; line-height: 1.65; }
+    .schema-hint code { padding: 2px 5px; border-radius: 4px; color: #5b54c9; background: #f0efff; }
+    .modal-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 15px 22px; border-top: 1px solid var(--line); background: #fcfcfe; }
+    .foot-left, .foot-right { display: flex; gap: 8px; align-items: center; }
+    .text-btn { border: 0; color: var(--muted); background: transparent; font-size: 12px; }
+    .text-btn:hover { color: var(--primary); }
+    .primary-btn { border: 0; border-radius: 10px; padding: 10px 16px; color: white; background: var(--primary); font-size: 12px; font-weight: 800; transition: .2s; }
+    .primary-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .secondary-btn { border: 1px solid var(--line); border-radius: 10px; padding: 9px 14px; color: var(--muted); background: white; font-size: 12px; font-weight: 700; }
+    .secondary-btn:hover { color: var(--primary); border-color: #c9c6f7; }
+    .error-message { display: none; margin-top: 11px; padding: 9px 11px; border-radius: 8px; color: #bd4055; background: #fff0f2; font-size: 12px; line-height: 1.5; }
+    .error-message.show { display: block; }
+    .toast { position: fixed; z-index: 60; left: 50%; bottom: 28px; padding: 11px 15px; border-radius: 10px; color: white; background: #242b3b; box-shadow: 0 8px 25px rgba(26,31,50,.2); font-size: 12px; transform: translate(-50%, 15px); opacity: 0; pointer-events: none; transition: .25s; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    body.dark {
+      --bg: #151827; --surface: rgba(31, 35, 54, .86); --surface-solid: #20243a; --text: #f1f3fb; --muted: #a3abc0; --line: #343950; --shadow: 0 16px 50px rgba(0,0,0,.25);
+      background: radial-gradient(circle at 8% 0%, rgba(113, 99, 247, .16), transparent 30rem), radial-gradient(circle at 92% 12%, rgba(52, 211, 153, .08), transparent 27rem), var(--bg);
+    }
+    body.dark .topbar { background: rgba(21, 24, 39, .8); border-color: rgba(52,57,80,.75); }
+    body.dark .icon-btn, body.dark .outline-btn, body.dark .search-box input, body.dark .secondary-btn { color: var(--muted); border-color: var(--line); background: rgba(32, 36, 58, .9); }
+    body.dark .search-box input { color: var(--text); }
+    body.dark .category-btn { color: var(--muted); }
+    body.dark .category-btn:hover { color: #b9b5ff; background: #29264b; }
+    body.dark .category-btn.active { color: white; background: var(--primary); }
+    body.dark .tag { color: #b1b8ca; background: #2c3046; }
+    body.dark .modal, body.dark .modal-foot { background: var(--surface-solid); }
+    body.dark .modal-head, body.dark .modal-foot { border-color: var(--line); }
+    body.dark .config-editor { color: #d6dbeb; border-color: var(--line); background: #181b2c; }
+    body.dark footer { border-color: var(--line); }
+
+    @media (max-width: 820px) { .tool-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hero { padding-top: 48px; } }
+    @media (max-width: 580px) { .container { width: min(100% - 28px, 1180px); } .topbar-inner { height: 66px; } .brand { font-size: 16px; } .brand-mark { width: 34px; height: 34px; border-radius: 10px; } .outline-btn span { display: none; } .hero { padding: 45px 0 32px; } h1 { font-size: 38px; } .hero p { font-size: 13px; } .search-box input { height: 52px; } .toolbar { align-items: flex-start; flex-direction: column; gap: 12px; } .tool-grid { grid-template-columns: 1fr; gap: 13px; } .tool-card { min-height: 168px; } .modal-foot { align-items: stretch; flex-direction: column; } .foot-left, .foot-right { justify-content: space-between; } .footer-inner { align-items: flex-start; flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="#" aria-label="Crazy UTools 首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/></svg>
+        </span>
+        <span>Crazy UTools</span>
+      </a>
+      <div class="top-actions">
+        <button class="icon-btn" id="themeButton" title="切换主题" aria-label="切换主题">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.8 15.6A8.6 8.6 0 0 1 8.4 3.2 8.7 8.7 0 1 0 20.8 15.6Z"/></svg>
+        </button>
+        <button class="outline-btn" id="configButton" title="编辑 JSON 配置">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 12.5-11.5Z"/></svg><span>配置工具</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero container">
+      <span class="eyebrow"><i></i> YOUR DAILY TOOLKIT</span>
+      <h1>常用工具，一站直达</h1>
+      <p>把常用的网页工具收纳在这里。通过 JSON 配置自由添加、修改和管理你的专属工具导航。</p>
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="searchInput" type="search" placeholder="搜索工具名称、描述或标签..." autocomplete="off" aria-label="搜索工具">
+        <span class="shortcut">/</span>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="toolbar">
+        <div class="categories" id="categories" aria-label="工具分类"></div>
+        <div class="result-count" id="resultCount"></div>
+      </div>
+      <div class="tool-grid" id="toolGrid"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span id="footerBrand">© 2026 Crazy UTools</span>
+      <span>Made with <svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.4-9.5-8.8C.5 8.5 2.2 4.8 6 4.2c2.2-.3 4.1.8 5.1 2.5 1-1.7 2.9-2.8 5.1-2.5 3.8.6 5.5 4.3 3.5 8C19.2 16.6 12 21 12 21Z"/></svg> for your productivity</span>
+    </div>
+  </footer>
+
+  <div class="modal-backdrop" id="configModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modal-head">
+        <div><h3 id="modalTitle">配置工具导航</h3><p>编辑 JSON 后应用，即时更新当前页面。</p></div>
+        <button class="icon-btn" id="closeModal" title="关闭" aria-label="关闭配置窗口">×</button>
+      </div>
+      <div class="modal-body">
+        <textarea class="config-editor" id="configEditor" spellcheck="false" aria-label="JSON 配置编辑器"></textarea>
+        <div class="error-message" id="errorMessage"></div>
+        <p class="schema-hint">每个工具至少需要 <code>name</code>、<code>url</code>、<code>category</code>。可选字段：<code>description</code>、<code>icon</code>、<code>tags</code>、<code>color</code>、<code>newTab</code>。</p>
+      </div>
+      <div class="modal-foot">
+        <div class="foot-left"><button class="text-btn" id="resetButton">恢复示例配置</button><button class="text-btn" id="exportButton">导出 JSON</button><button class="text-btn" id="importButton">导入 JSON</button><input id="fileInput" type="file" accept=".json,application/json" hidden></div>
+        <div class="foot-right"><button class="secondary-btn" id="cancelButton">取消</button><button class="primary-btn" id="applyButton">应用配置</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    // 默认配置：可以直接复制到配置窗口中进行修改。
+    const DEFAULT_CONFIG = {
+      "siteName": "Crazy UTools",
+      "tools": [
+        { "name": "在线 JSON 格式化", "description": "快速校验、格式化与压缩 JSON 数据。", "url": "https://jsonformatter.org/", "category": "开发工具", "icon": "{}", "tags": ["JSON", "格式化"], "color": "#6259e8", "newTab": true },
+        { "name": "TinyPNG 图片压缩", "description": "智能压缩 PNG 与 JPEG 图片，保持高画质。", "url": "https://tinypng.com/", "category": "图片工具", "icon": "✦", "tags": ["图片", "压缩"], "color": "#0c9c86", "newTab": true },
+        { "name": "Excalidraw", "description": "简单、直观的在线白板与手绘风格图表工具。", "url": "https://excalidraw.com/", "category": "效率工具", "icon": "◇", "tags": ["白板", "绘图"], "color": "#eb6a45", "newTab": true },
+        { "name": "Can I Use", "description": "查询浏览器对现代 Web 特性的兼容情况。", "url": "https://caniuse.com/", "category": "开发工具", "icon": "◈", "tags": ["兼容性", "Web"], "color": "#2d82d7", "newTab": true },
+        { "name": "Remove.bg", "description": "一键移除图片背景，自动生成透明图。", "url": "https://www.remove.bg/", "category": "图片工具", "icon": "◒", "tags": ["抠图", "AI"], "color": "#7b5bd6", "newTab": true },
+        { "name": "密码生成器", "description": "生成安全、随机且可自定义的密码。", "url": "https://passwordsgenerator.net/", "category": "安全工具", "icon": "⌁", "tags": ["密码", "安全"], "color": "#d28a20", "newTab": true },
+        { "name": "Carbon", "description": "创建精美的代码截图，适合分享与文档使用。", "url": "https://carbon.now.sh/", "category": "开发工具", "icon": "</>", "tags": ["代码", "截图"], "color": "#3c79c9", "newTab": true },
+        { "name": "WolframAlpha", "description": "强大的计算知识引擎，解决复杂问题。", "url": "https://www.wolframalpha.com/", "category": "效率工具", "icon": "Σ", "tags": ["计算", "知识"], "color": "#d14961", "newTab": true },
+        { "name": "WhatFont", "description": "识别网页上正在使用的字体与排版信息。", "url": "https://www.whatfontis.com/", "category": "设计工具", "icon": "Aa", "tags": ["字体", "设计"], "color": "#bc579d", "newTab": true },
+        { "name": "AI Image Preview", "description": "在线预览和体验 AI 图片生成效果。", "url": "https://zhudunfeng.github.io/ai-image-preview/", "category": "AI 工具", "icon": "AI", "tags": ["AI", "图片", "预览"], "color": "#7168f6", "newTab": true }
+      ]
+    };
+
+    const storageKey = "crazy-utools-nav-config";
+    const state = { config: null, activeCategory: "全部", query: "" };
+    const $ = (selector) => document.querySelector(selector);
+
+    function getConfig() {
+      try {
+        const saved = localStorage.getItem(storageKey);
+        if (saved) return validateConfig(JSON.parse(saved));
+      } catch (error) { console.warn("读取本地配置失败，将使用默认配置。", error); }
+      return structuredClone(DEFAULT_CONFIG);
+    }
+
+    function validateConfig(value) {
+      if (!value || typeof value !== "object" || !Array.isArray(value.tools)) throw new Error("配置必须是包含 tools 数组的 JSON 对象。");
+      const tools = value.tools.map((tool, index) => {
+        if (!tool || typeof tool !== "object") throw new Error(`第 ${index + 1} 个工具不是对象。`);
+        if (!String(tool.name || "").trim()) throw new Error(`第 ${index + 1} 个工具缺少 name。`);
+        if (!isSafeUrl(tool.url)) throw new Error(`工具“${tool.name}”的 url 无效，仅支持 http:// 或 https:// 地址。`);
+        return {
+          name: String(tool.name).trim(), description: String(tool.description || ""), url: String(tool.url), category: String(tool.category || "其他"), icon: String(tool.icon || "↗"), tags: Array.isArray(tool.tags) ? tool.tags.map(String).slice(0, 6) : [], color: isColor(tool.color) ? tool.color : "#6259e8", newTab: tool.newTab !== false
+        };
+      });
+      return { siteName: String(value.siteName || "Crazy UTools"), tools };
+    }
+
+    function isSafeUrl(url) { try { const parsed = new URL(url); return ["http:", "https:"].includes(parsed.protocol); } catch (_) { return false; } }
+    function isColor(color) { return typeof color === "string" && (/^#[0-9a-f]{3,8}$/i.test(color) || /^rgb(a)?\(/i.test(color) || /^hsl(a)?\(/i.test(color)); }
+    function softColor(color) { return color.startsWith("#") ? color + (color.length === 7 ? "18" : "") : "#eeedff"; }
+    function escapeHtml(value) { return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char])); }
+
+    function renderCategories() {
+      const categories = ["全部", ...new Set(state.config.tools.map((tool) => tool.category))];
+      if (!categories.includes(state.activeCategory)) state.activeCategory = "全部";
+      $("#categories").innerHTML = categories.map((category) => `<button class="category-btn ${category === state.activeCategory ? "active" : ""}" data-category="${escapeHtml(category)}">${escapeHtml(category)}</button>`).join("");
+      $("#categories").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => { state.activeCategory = button.dataset.category; renderCategories(); renderTools(); }));
+    }
+
+    function renderTools() {
+      const query = state.query.trim().toLowerCase();
+      const tools = state.config.tools.filter((tool) => {
+        const inCategory = state.activeCategory === "全部" || tool.category === state.activeCategory;
+        const searchable = [tool.name, tool.description, tool.category, ...tool.tags].join(" ").toLowerCase();
+        return inCategory && (!query || searchable.includes(query));
+      });
+      $("#resultCount").textContent = `${tools.length} 个工具`;
+      $("#toolGrid").innerHTML = tools.length ? tools.map((tool) => {
+        const color = tool.color || "#6259e8";
+        return `<a class="tool-card" href="${escapeHtml(tool.url)}" target="${tool.newTab ? "_blank" : "_self"}" rel="noopener noreferrer" style="--accent:${escapeHtml(color)};--accent-soft:${escapeHtml(softColor(color))}" data-tool="${escapeHtml(tool.name)}">
+          <div class="card-top"><span class="tool-icon" aria-hidden="true">${tool.icon.startsWith("http") ? `<img src="${escapeHtml(tool.icon)}" alt="">` : escapeHtml(tool.icon)}</span><span class="open-indicator" title="打开工具"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5h5v5M19 5l-8 8"/><path d="M18 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></span></div>
+          <h2>${escapeHtml(tool.name)}</h2><p>${escapeHtml(tool.description)}</p><div class="tags">${tool.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</div>
+        </a>`;
+      }).join("") : `<div class="empty-state"><strong>没有找到匹配的工具</strong><span>换个关键词试试，或在配置面板中添加新工具。</span></div>`;
+    }
+
+    function render() {
+      document.title = `${state.config.siteName} · 工具导航`;
+      $("#footerBrand").textContent = `© 2026 ${state.config.siteName}`;
+      renderCategories(); renderTools();
+    }
+
+    function showToast(message) { const toast = $("#toast"); toast.textContent = message; toast.classList.add("show"); clearTimeout(showToast.timer); showToast.timer = setTimeout(() => toast.classList.remove("show"), 2600); }
+    function openConfig() { $("#configEditor").value = JSON.stringify(state.config, null, 2); $("#errorMessage").classList.remove("show"); $("#configModal").classList.add("show"); setTimeout(() => $("#configEditor").focus(), 0); }
+    function closeConfig() { $("#configModal").classList.remove("show"); }
+
+    $("#searchInput").addEventListener("input", (event) => { state.query = event.target.value; renderTools(); });
+    $("#configButton").addEventListener("click", openConfig);
+    $("#closeModal").addEventListener("click", closeConfig);
+    $("#cancelButton").addEventListener("click", closeConfig);
+    $("#configModal").addEventListener("click", (event) => { if (event.target === $("#configModal")) closeConfig(); });
+    $("#applyButton").addEventListener("click", () => {
+      try { const config = validateConfig(JSON.parse($("#configEditor").value)); state.config = config; localStorage.setItem(storageKey, JSON.stringify(config)); state.activeCategory = "全部"; render(); closeConfig(); showToast("配置已应用并保存"); }
+      catch (error) { const message = error instanceof SyntaxError ? "JSON 格式有误，请检查逗号、引号和括号。" : error.message; $("#errorMessage").textContent = message; $("#errorMessage").classList.add("show"); }
+    });
+    $("#resetButton").addEventListener("click", () => { $("#configEditor").value = JSON.stringify(DEFAULT_CONFIG, null, 2); $("#errorMessage").classList.remove("show"); showToast("已载入示例配置，点击应用后生效"); });
+    $("#exportButton").addEventListener("click", () => { const blob = new Blob([JSON.stringify(state.config, null, 2)], { type: "application/json" }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = "crazy-utools-config.json"; link.click(); URL.revokeObjectURL(link.href); showToast("配置文件已导出"); });
+    $("#importButton").addEventListener("click", () => $("#fileInput").click());
+    $("#fileInput").addEventListener("change", async (event) => { const file = event.target.files[0]; if (!file) return; try { $("#configEditor").value = await file.text(); $("#errorMessage").classList.remove("show"); showToast("文件已载入，请点击应用配置"); } catch (_) { showToast("文件读取失败"); } event.target.value = ""; });
+    const savedTheme = localStorage.getItem("crazy-utools-nav-theme");
+    if (savedTheme === "dark") document.body.classList.add("dark");
+    $("#themeButton").addEventListener("click", () => {
+      const isDark = document.body.classList.toggle("dark");
+      localStorage.setItem("crazy-utools-nav-theme", isDark ? "dark" : "light");
+      showToast(isDark ? "已切换深色模式" : "已切换浅色模式");
+    });
+    document.addEventListener("keydown", (event) => { if (event.key === "/" && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") { event.preventDefault(); $("#searchInput").focus(); } if (event.key === "Escape") closeConfig(); });
+
+    state.config = getConfig();
+    render();
+  </script>
+</body>
+</html>
